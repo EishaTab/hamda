@@ -12,7 +12,7 @@
 //         {id: 10, name: "Zainab", city: "Sialkot"},
 //     ]);
 // }
-const allStudents = [
+let allStudents = [
     { id: 1, name: "Ali", city: "Faisalabad" },
     { id: 2, name: "Sara", city: "Lahore" },
     { id: 3, name: "Ahmed", city: "Karachi" },
@@ -28,14 +28,44 @@ export async function GET() {
     return Response.json({
         success: true,
         student: { name: "ali", age: 40 },
-        allStudents:allStudents
+        allStudents: allStudents
     });
 }
 export async function POST(request) {
     const newStudent = await request.json()
-    
+
     if (newStudent.name && newStudent.city) {
-        allStudents.push({id:allStudents.length+1, ...newStudent})
+        allStudents.push({ id: allStudents.length + 1, ...newStudent })
+    }
+    return Response.json({
+        success: true,
+        allStudents: allStudents
+    });
+}
+export async function DELETE(req) {
+    const { searchParams } = new URL(req.url);
+    console.log("searchParamas", searchParams, new URL(req.url), req)
+    const id = Number(searchParams.get("id"));
+    allStudents = allStudents.filter((s) => s.id !== id);
+    return Response.json({
+        success: true,
+        message: "Sara deleted successfully",
+        allStudents: allStudents
+    });
+}
+export async function PUT(request) {
+    const newStudent = await request.json()
+    console.log(newStudent, "newStudent")
+
+    if (newStudent.name && newStudent.city && newStudent.id) {
+       const newArray=  allStudents.map(s => {
+            if (s.id === newStudent.id) {
+                console.log("Match found", s)
+                return newStudent
+            }
+            else return s
+        })
+        allStudents=newArray
     }
     return Response.json({
         success: true,
